@@ -23,7 +23,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setError(null);
     try {
       const res = await fetch(
-        `/api/${mode === "login" ? "login" : "create-account"}`,
+        `/api/${mode === "login" ? "login" : "register"}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
