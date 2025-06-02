@@ -1,4 +1,3 @@
-# syntax = docker/dockerfile:1.2
 # ----------- Step 1: Build Frontend -----------
 FROM node:23.2.0-alpine AS frontend
 
@@ -23,8 +22,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY . .
-
+COPY . .    
 COPY --from=frontend /app/client/dist ./client/dist
 
 RUN go build -o server main.go
@@ -34,7 +32,7 @@ FROM gcr.io/distroless/static-debian12
 
 COPY --from=backend /app/server .
 COPY --from=backend /app/client/dist ./client/dist
-
-CMD ["/server", "-config", "/etc/secrets/config.yaml"]
+COPY --from=backend /app/config.yaml ./config.yaml
+CMD ["/server"]
 
 EXPOSE 8080
