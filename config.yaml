@@ -1,0 +1,8 @@
+environment: production
+port: 5000
+db:
+  path: db/colorscheme.db
+  max_open_conns: 10
+  max_idle_conns: 10
+  conn_max_lifetime: 5
+jwt_secret: "your_secret_key"
