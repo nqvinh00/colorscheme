@@ -2,6 +2,7 @@
 
 A full-stack web application for creating, previewing, and sharing terminal color schemes.  
 Built with **React + TypeScript + Tailwind CSS** on the frontend and **Go (Gin)** on the backend.
+Demo: https://colorscheme.onrender.com/
 
 ---
 
