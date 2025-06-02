@@ -15,10 +15,15 @@ type Config struct {
 }
 
 type DBConfig struct {
-	Path            string `json:"path" yaml:"path"`
+	Host            string `json:"host" yaml:"host"`
+	Port            int    `json:"port" yaml:"port"`
+	User            string `json:"user" yaml:"user"`
+	Password        string `json:"password" yaml:"password"`
+	DBName          string `json:"db_name" yaml:"db_name"`
+	SSLMode         string `json:"ssl_mode" yaml:"ssl_mode"`
 	MaxOpenConns    int    `json:"max_open_conns" yaml:"max_open_conns"`
 	MaxIdleConns    int    `json:"max_idle_conns" yaml:"max_idle_conns"`
-	ConnMaxLifetime int `json:"conn_max_lifetime" yaml:"conn_max_lifetime"`
+	ConnMaxLifetime int    `json:"conn_max_lifetime" yaml:"conn_max_lifetime"`
 }
 
 func LoadConfig(path string) (*Config, error) {
