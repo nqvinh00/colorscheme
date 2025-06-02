@@ -108,23 +108,3 @@ npm run dev
   ```sh
   npx prettier --write .
   ```
-
----
-
-## License
-
-MIT
-
----
-
-## Credits
-
-- [Gin](https://github.com/gin-gonic/gin)
-- [React](https://react.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Shiki](https://github.com/shikijs/shiki)
-- [Vite](https://vitejs.dev/)
-
----
-
-**Happy theming!** 🎨
