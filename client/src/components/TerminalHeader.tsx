@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Terminal, LogIn, LogOut } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { AuthModal } from "@/components/AuthModal";
 import { getUsernameFromToken } from "@/lib/utils";
 
-export const TerminalHeader = () => {
+const ThemeToggle = React.lazy(() => import("@/components/ThemeToggle"));
+const AuthModal = React.lazy(() => import("@/components/AuthModal"));
+
+const TerminalHeader = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -69,14 +70,20 @@ export const TerminalHeader = () => {
               </button>
             </>
           )}
-          <ThemeToggle />
+          <Suspense fallback={<div className="h-10 w-10" />}>
+            <ThemeToggle />
+          </Suspense>
         </div>
       </div>
-      <AuthModal
-        isOpen={authOpen}
-        onClose={() => setAuthOpen(false)}
-        onAuthSuccess={handleAuthSuccess}
-      />
+      <Suspense fallback={null}>
+        <AuthModal
+          isOpen={authOpen}
+          onClose={() => setAuthOpen(false)}
+          onAuthSuccess={handleAuthSuccess}
+        />
+      </Suspense>
     </header>
   );
 };
+
+export default TerminalHeader;

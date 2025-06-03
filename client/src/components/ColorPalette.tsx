@@ -20,7 +20,7 @@ interface ColorPaletteProps {
   size?: "sm" | "md" | "lg";
 }
 
-export const ColorPalette = ({ colors, size = "md" }: ColorPaletteProps) => {
+const ColorPalette = ({ colors, size = "md" }: ColorPaletteProps) => {
   const sizeClasses = {
     sm: "h-4 w-4",
     md: "h-6 w-6",
@@ -59,3 +59,5 @@ export const ColorPalette = ({ colors, size = "md" }: ColorPaletteProps) => {
     </div>
   );
 };
+
+export default ColorPalette;

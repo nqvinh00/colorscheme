@@ -1,6 +1,5 @@
-import { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { ColorScheme } from "@/types/colorScheme";
-import { TerminalWindow } from "@/components/TerminalWindow";
 import { useShikiHighlighterCode } from "@/hooks/shiki-highlighter";
 import {
   Select,
@@ -9,6 +8,8 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { codeSnippets } from "@/data/codeSnippet";
+
+const TerminalWindow = React.lazy(() => import("@/components/TerminalWindow"));
 
 interface SchemePreviewProps {
   scheme: ColorScheme;
@@ -23,7 +24,7 @@ const languageDisplayNames: Record<string, string> = {
   go: "Go",
 };
 
-export const SchemePreview = ({ scheme }: SchemePreviewProps) => {
+const SchemePreview = ({ scheme }: SchemePreviewProps) => {
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const code = codeSnippets[selectedLanguage] || codeSnippets.javascript;
   const html = useShikiHighlighterCode(code, selectedLanguage, scheme);
@@ -67,7 +68,9 @@ export const SchemePreview = ({ scheme }: SchemePreviewProps) => {
           />
         </div>
 
-        <TerminalWindow scheme={scheme} />
+        <Suspense fallback={<div className="text-gray-400">Loading terminal...</div>}>
+          <TerminalWindow scheme={scheme} />
+        </Suspense>
 
         <div className="rounded-lg border border-gray-700 bg-gray-800 p-4">
           <h4 className="mb-3 text-lg font-medium text-green-300">
@@ -90,3 +93,5 @@ export const SchemePreview = ({ scheme }: SchemePreviewProps) => {
     </div>
   );
 };
+
+export default SchemePreview;

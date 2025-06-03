@@ -16,10 +16,10 @@ func NewUserRepository(db *sql.DB) UserRepository {
 }
 
 func (r *userRepository) CreateAccount(username, password string) error {
-	_, err := r.db.Exec("INSERT INTO users (username, password) VALUES (?, ?)", username, password)
+	_, err := r.db.Exec("INSERT INTO users (username, password) VALUES ($1, $2)", username, password)
 	return err
 }
 
 func (r *userRepository) Login(username string, hashed *string) error {
-	return r.db.QueryRow("SELECT password FROM users WHERE username = ?", username).Scan(hashed)
+	return r.db.QueryRow("SELECT password FROM users WHERE username = $1", username).Scan(hashed)
 }

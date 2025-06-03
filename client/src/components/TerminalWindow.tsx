@@ -4,7 +4,7 @@ interface TerminalWindowProps {
   scheme: ColorScheme;
 }
 
-export const TerminalWindow = ({ scheme }: TerminalWindowProps) => {
+const TerminalWindow = ({ scheme }: TerminalWindowProps) => {
   return (
     <div className="rounded-lg border border-gray-700 bg-gray-800 p-1">
       <div className="flex items-center gap-2 rounded-t-lg bg-gray-700 px-4 py-2">
@@ -83,3 +83,5 @@ export const TerminalWindow = ({ scheme }: TerminalWindowProps) => {
     </div>
   );
 };
+
+export default TerminalWindow;

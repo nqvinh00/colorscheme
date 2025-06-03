@@ -23,7 +23,7 @@ func NewColorSchemeRepository(db *sql.DB) ColorSchemeRepository {
 }
 
 func (r *colorSchemeRepository) GetByAuthor(author string) ([]models.ColorScheme, error) {
-	rows, err := r.db.Query("SELECT id, name, author, category FROM color_schemes WHERE author = ?", author)
+	rows, err := r.db.Query("SELECT id, name, author, category FROM color_schemes WHERE author = $1", author)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (r *colorSchemeRepository) GetByAuthor(author string) ([]models.ColorScheme
 			return nil, err
 		}
 		// Load colors for this scheme
-		colorRows, err := r.db.Query("SELECT color_key, color_value FROM color_scheme_colors WHERE scheme_id = ?", s.ID)
+		colorRows, err := r.db.Query("SELECT color_key, color_value FROM color_scheme_colors WHERE scheme_id = $1", s.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -56,7 +56,7 @@ func (r *colorSchemeRepository) GetByAuthor(author string) ([]models.ColorScheme
 }
 
 func (r *colorSchemeRepository) GetById(id string) (*models.ColorScheme, error) {
-	rows, err := r.db.Query("SELECT id, name, author, category FROM color_schemes WHERE id = ?", id)
+	rows, err := r.db.Query("SELECT id, name, author, category FROM color_schemes WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (r *colorSchemeRepository) GetById(id string) (*models.ColorScheme, error) 
 		return nil, err
 	}
 	// Load colors for this scheme
-	colorRows, err := r.db.Query("SELECT color_key, color_value FROM color_scheme_colors WHERE scheme_id = ?", scheme.ID)
+	colorRows, err := r.db.Query("SELECT color_key, color_value FROM color_scheme_colors WHERE scheme_id = $1", scheme.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -92,13 +92,13 @@ func (r *colorSchemeRepository) Create(scheme models.ColorScheme) error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec("INSERT INTO color_schemes (id, name, author, category) VALUES (?, ?, ?, ?)", scheme.ID, scheme.Name, scheme.Author, scheme.Category)
+	_, err = tx.Exec("INSERT INTO color_schemes (id, name, author, category) VALUES ($1, $2, $3, $4)", scheme.ID, scheme.Name, scheme.Author, scheme.Category)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	for key, value := range scheme.Colors {
-		_, err := tx.Exec("INSERT INTO color_scheme_colors (scheme_id, color_key, color_value) VALUES (?, ?, ?)", scheme.ID, key, value)
+		_, err := tx.Exec("INSERT INTO color_scheme_colors (scheme_id, color_key, color_value) VALUES ($1, $2, $3)", scheme.ID, key, value)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -112,20 +112,20 @@ func (r *colorSchemeRepository) Update(scheme models.ColorScheme) error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec("UPDATE color_schemes SET name = ?, author = ?, category = ? WHERE id = ?", scheme.Name, scheme.Author, scheme.Category, scheme.ID)
+	_, err = tx.Exec("UPDATE color_schemes SET name = $1, author = $2, category = $3 WHERE id = $4", scheme.Name, scheme.Author, scheme.Category, scheme.ID)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	// Remove old colors
-	_, err = tx.Exec("DELETE FROM color_scheme_colors WHERE scheme_id = ?", scheme.ID)
+	_, err = tx.Exec("DELETE FROM color_scheme_colors WHERE scheme_id = $1", scheme.ID)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	// Insert new colors
 	for key, value := range scheme.Colors {
-		_, err := tx.Exec("INSERT INTO color_scheme_colors (scheme_id, color_key, color_value) VALUES (?, ?, ?)", scheme.ID, key, value)
+		_, err := tx.Exec("INSERT INTO color_scheme_colors (scheme_id, color_key, color_value) VALUES ($1, $2, $3)", scheme.ID, key, value)
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -135,6 +135,6 @@ func (r *colorSchemeRepository) Update(scheme models.ColorScheme) error {
 }
 
 func (r *colorSchemeRepository) Delete(id string) error {
-	_, err := r.db.Exec("DELETE FROM color_schemes WHERE id = ?", id)
+	_, err := r.db.Exec("DELETE FROM color_schemes WHERE id = $1", id)
 	return err
 }

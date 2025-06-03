@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { ColorScheme } from "@/types/colorScheme";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,7 @@ interface CustomSchemeFormProps {
   onAddScheme: (scheme: ColorScheme) => void;
 }
 
-export const CustomSchemeForm = ({ onAddScheme }: CustomSchemeFormProps) => {
+const CustomSchemeForm = ({ onAddScheme }: CustomSchemeFormProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -255,3 +255,5 @@ export const CustomSchemeForm = ({ onAddScheme }: CustomSchemeFormProps) => {
     </div>
   );
 };
+
+export default CustomSchemeForm;

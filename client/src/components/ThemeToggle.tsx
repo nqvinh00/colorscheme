@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function ThemeToggle() {
+const ThemeToggle = () => {
   const [isDark, setIsDark] = useState(() =>
     document.documentElement.classList.contains("dark"),
   );
@@ -47,4 +47,6 @@ export function ThemeToggle() {
       )}
     </button>
   );
-}
+};
+
+export default ThemeToggle;

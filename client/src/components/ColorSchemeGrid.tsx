@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { ColorScheme } from "@/types/colorScheme";
-import { ColorPalette } from "@/components/ColorPalette";
+const ColorPalette = React.lazy(() => import("@/components/ColorPalette"));
 
 interface ColorSchemeGridProps {
   schemes: ColorScheme[];
@@ -8,7 +8,7 @@ interface ColorSchemeGridProps {
   onSchemeSelect: (scheme: ColorScheme) => void;
 }
 
-export const ColorSchemeGrid = ({
+const ColorSchemeGrid = ({
   schemes,
   selectedScheme,
   onSchemeSelect,
@@ -49,11 +49,10 @@ export const ColorSchemeGrid = ({
         <div
           key={scheme.id}
           onClick={() => onSchemeSelect(scheme)}
-          className={`cursor-pointer rounded-lg border-2 p-4 transition-all hover:border-green-400 ${
-            selectedScheme.id === scheme.id
-              ? "border-green-400 bg-gray-800"
-              : "border-gray-700 bg-gray-850 hover:bg-gray-800"
-          }`}
+          className={`cursor-pointer rounded-lg border-2 p-4 transition-all hover:border-green-400 ${selectedScheme.id === scheme.id
+            ? "border-green-400 bg-gray-800"
+            : "border-gray-700 bg-gray-850 hover:bg-gray-800"
+            }`}
         >
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-lg font-semibold text-green-300">
@@ -61,9 +60,13 @@ export const ColorSchemeGrid = ({
             </h3>
             <span className="text-sm text-gray-400">{scheme.author}</span>
           </div>
-          <ColorPalette colors={scheme.colors} size="sm" />
+          <Suspense fallback={<div className="text-gray-400">Loading palette...</div>}>
+            <ColorPalette colors={scheme.colors} size="sm" />
+          </Suspense>
         </div>
       ))}
     </div>
   );
 };
+
+export default ColorSchemeGrid;

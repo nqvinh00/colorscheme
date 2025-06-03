@@ -6,7 +6,7 @@ interface AuthModalProps {
   onAuthSuccess: (token: string) => void;
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({
+const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   onAuthSuccess,
@@ -116,3 +116,5 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     </div>
   );
 };
+
+export default AuthModal;
