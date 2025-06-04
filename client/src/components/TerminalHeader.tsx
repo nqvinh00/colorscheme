@@ -5,9 +5,12 @@ import { getUsernameFromToken } from "@/lib/utils";
 const ThemeToggle = React.lazy(() => import("@/components/ThemeToggle"));
 const AuthModal = React.lazy(() => import("@/components/AuthModal"));
 
-const TerminalHeader = () => {
+interface TerminalHeaderProps {
+  setToken: (token: string | null) => void;
+}
+
+const TerminalHeader: React.FC<TerminalHeaderProps> = ({ setToken }) => {
   const [authOpen, setAuthOpen] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
 
   // On mount, check for token in sessionStorage
@@ -48,7 +51,7 @@ const TerminalHeader = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {!token ? (
+          {!username ? (
             <button
               className="p-2 rounded bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-400 dark:border-gray-600 transition h-10 w-10 flex items-center justify-center"
               onClick={() => setAuthOpen(true)}
@@ -79,7 +82,11 @@ const TerminalHeader = () => {
         <AuthModal
           isOpen={authOpen}
           onClose={() => setAuthOpen(false)}
-          onAuthSuccess={handleAuthSuccess}
+          onAuthSuccess={(token) => {
+            setToken(token);
+            sessionStorage.setItem("token", token);
+            setUsername("Welcome, " + getUsernameFromToken(token));
+          }}
         />
       </Suspense>
     </header>
