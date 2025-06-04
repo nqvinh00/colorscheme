@@ -10,6 +10,7 @@ const CustomSchemeForm = React.lazy(() => import("@/components/CustomSchemeForm"
 const Index = () => {
   const [colorSchemes, setColorSchemes] = useState(initialColorSchemes);
   const [selectedScheme, setSelectedScheme] = useState(colorSchemes[0]);
+  const [token, setToken] = useState(() => sessionStorage.getItem("token"));
 
   const handleAddScheme = (newScheme: ColorScheme) => {
     setColorSchemes((prev) => [...prev, newScheme]);
@@ -19,7 +20,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground font-mono">
       <Suspense fallback={<div>Loading header...</div>}>
-        <TerminalHeader />
+        <TerminalHeader setToken={setToken} />
       </Suspense>
       <main className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-8">
@@ -32,6 +33,8 @@ const Index = () => {
                 schemes={colorSchemes}
                 selectedScheme={selectedScheme}
                 onSchemeSelect={setSelectedScheme}
+                token={token}
+                setToken={setToken}
               />
               <CustomSchemeForm onAddScheme={handleAddScheme} />
             </Suspense>

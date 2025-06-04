@@ -11,6 +11,7 @@ import (
 	"github.com/nqvinh00/colorscheme/handlers/middleware"
 	"github.com/nqvinh00/colorscheme/pkg/database"
 	"github.com/nqvinh00/colorscheme/repository"
+	"github.com/nqvinh00/colorscheme/services"
 
 	"github.com/nqvinh00/colorscheme/constant"
 	"github.com/nqvinh00/colorscheme/pkg/config"
@@ -41,10 +42,13 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
+
 	userRepo := repository.NewUserRepository(db)
 	colorSchemeRepo := repository.NewColorSchemeRepository(db)
-	userHandler := handlers.NewUserHandler(userRepo, cfg.JwtSecret, log)
-	colorSchemeHandler := handlers.NewColorSchemeHandler(colorSchemeRepo, log)
+	userService := services.NewUserService(userRepo, log, cfg.JwtSecret)
+	colorSchemeService := services.NewColorSchemeService(colorSchemeRepo, log)
+	userHandler := handlers.NewUserHandler(userService)
+	colorSchemeHandler := handlers.NewColorSchemeHandler(colorSchemeService)
 
 	router := gin.New()
 	router.Use(gin.Recovery())
@@ -63,6 +67,8 @@ func main() {
 			secureApi.GET("/color-schemes", colorSchemeHandler.GetAllColorSchemesByAuthor)
 			secureApi.GET("/color-schemes/:id", colorSchemeHandler.GetColorSchemeById)
 			secureApi.POST("/color-schemes", colorSchemeHandler.CreateColorScheme)
+			secureApi.PUT("/color-schemes", colorSchemeHandler.UpdateColorScheme)
+			secureApi.DELETE("/color-schemes/:id", colorSchemeHandler.DeleteColorScheme)
 		}
 	}
 

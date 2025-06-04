@@ -2,27 +2,20 @@ package handlers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nqvinh00/colorscheme/models"
-	"github.com/nqvinh00/colorscheme/pkg/utils"
-	"github.com/nqvinh00/colorscheme/repository"
-	"github.com/rs/zerolog"
+	"github.com/nqvinh00/colorscheme/services"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type userHandler struct {
-	userRepo  repository.UserRepository
-	log       zerolog.Logger
-	secretKey string
+	userService services.UserService
 }
 
-func NewUserHandler(userRepo repository.UserRepository, secretKey string, log zerolog.Logger) *userHandler {
+func NewUserHandler(userService services.UserService) *userHandler {
 	return &userHandler{
-		userRepo:  userRepo,
-		secretKey: secretKey,
-		log:       log,
+		userService: userService,
 	}
 }
 
@@ -46,30 +39,10 @@ func (h *userHandler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	h.log.Info().Msgf("Creating account for user: %s", req.Username)
-
-	err = h.userRepo.CreateAccount(req.Username, string(hashed))
+	token, err := h.userService.CreateAccount(c.Request.Context(), req.Username, string(hashed))
 	if err != nil {
-		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
-			c.JSON(http.StatusConflict, models.Response{
-				Message: "User already exists",
-				Code:    http.StatusConflict,
-			})
-		} else {
-			h.log.Error().Err(err).Msg("Failed to create user")
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Message: "Failed to create user",
-				Code:    http.StatusInternalServerError,
-			})
-		}
-		return
-	}
-
-	token, err := utils.GenerateToken(req.Username, h.secretKey)
-	if err != nil {
-		h.log.Error().Err(err).Msg("Failed to generate token")
 		c.JSON(http.StatusInternalServerError, models.Response{
-			Message: "Failed to generate token",
+			Message: "Failed to create account",
 			Code:    http.StatusInternalServerError,
 		})
 		return
@@ -89,29 +62,11 @@ func (h *userHandler) Login(c *gin.Context) {
 		return
 	}
 
-	var hashed string
-	err := h.userRepo.Login(req.Username, &hashed)
+	token, err := h.userService.Login(c.Request.Context(), req.Username, req.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, models.Response{
 			Message: "Invalid username or password",
 			Code:    http.StatusUnauthorized,
-		})
-		return
-	}
-
-	if bcrypt.CompareHashAndPassword([]byte(hashed), []byte(req.Password)) != nil {
-		c.JSON(http.StatusUnauthorized, models.Response{
-			Message: "Invalid username or password",
-			Code:    http.StatusUnauthorized,
-		})
-		return
-	}
-
-	token, err := utils.GenerateToken(req.Username, h.secretKey)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Message: "Failed to generate token",
-			Code:    http.StatusInternalServerError,
 		})
 		return
 	}
